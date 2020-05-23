@@ -1,13 +1,15 @@
 CC=gcc
 CFLAGS=-Wall -ansi
-LDFLAGS=-lm
+LDFLAGS=
+DEPS=visualtree.h tree.h
+OBJ=visualtree.o tree.o
 
-%.o: %.c visualtree.h tree.h
+%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-huffman: huffman.o visualtree.o tree.o
+huffman: huffman.o $(OBJ)
 	gcc -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -f huffman huffman.o visualtree.o tree.o current-tree.dot current-tree.pdf
+	rm -f $(OBJ) huffman huffman.o current-tree.dot current-tree.pdf
