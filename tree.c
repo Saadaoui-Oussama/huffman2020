@@ -1,6 +1,7 @@
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 /*----------------------------------------------------------------------------*/
@@ -44,6 +45,30 @@ node *scan_tree(FILE *fptr)
   }
   
   return t;
+}
+
+/*----------------------------------------------------------------------------*/
+void fill_code_tab(node *t, char* str, char** code_table) {
+
+  if (t->left == NULL && t->right == NULL) { /* On est sur la feuille */
+    code_table[(unsigned char)t->data] = (char *)malloc((strlen(str)+1)*sizeof(char)); /* On alloue de la place pour stocker la chaine */
+    strcpy(code_table[(unsigned char)t->data], str);
+  }
+
+  if (t->left != NULL) {
+    char *gauche = (char *)malloc((strlen(str)+1)*sizeof(char));
+    strcpy(gauche, str);
+    strcat(gauche, "0"); /* Si on va a gauche dans l'arbre, on met un 0 sur le chemin */
+    fill_code_tab(t->left, gauche, code_table);
+  }
+  
+  if (t->right != NULL) {
+    char *droite = (char *)malloc((strlen(str)+1)*sizeof(char));
+    strcpy(droite, str);
+    strcat(droite, "1"); /* Si on va a droite, c'est un 1 */
+    fill_code_tab(t->right, droite, code_table);
+  }
+  
 }
 
 /*----------------------------------------------------------------------------*/
