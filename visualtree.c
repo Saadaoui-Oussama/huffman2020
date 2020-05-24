@@ -32,7 +32,7 @@ void write_end(FILE *f)
  */
 void write_node(FILE *f, node *n)
 {
-  fprintf(f, "  n%p [label=\"<left> | <value> %d | <right>\"];\n", n, n->data);
+  fprintf(f, "  n%p [label=\"<left> | <value> %c | <right>\"];\n", n, n->data);
 }
 
 /*

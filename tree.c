@@ -5,7 +5,7 @@
 
 /*----------------------------------------------------------------------------*/
 
-node *create_node(int data)
+node *create_node(char data)
 {
   node *n = (node *)malloc(sizeof(node));
   assert(n != NULL);
@@ -17,162 +17,33 @@ node *create_node(int data)
 
 /*----------------------------------------------------------------------------*/
 
-void display_prefix(node *t)
+node *scan_tree(FILE *fptr)
 {
-  if(t == NULL)
-  {
-    return;
-  }
-  printf("%d ",t->data);
-  display_prefix(t->left);
-  display_prefix(t->right);
-}
+  char caractere = fgetc(fptr);
 
-/*----------------------------------------------------------------------------*/
+  printf("%c ",caractere);
 
-void display_infix(node *t)
-{
-  if(t == NULL)
-  {
-    return;
-  }
-
-  display_infix(t->left);
-  printf("%d ",t->data);
-  display_infix(t->right);
-}
-
-/*----------------------------------------------------------------------------*/
-
-void display_suffix(node *t)
-{
-  if(t == NULL)
-  {
-    return;
-  }
-
-  display_suffix(t->left);
-  display_suffix(t->right);
-  printf("%d ",t->data);
-}
-
-/*----------------------------------------------------------------------------*/
-
-node *scan_tree(void)
-{
-  node *t = NULL;
-  int nbr;
-
-  scanf("%d",&nbr);
-
-  if(nbr == 0)
+  if (caractere == EOF)
   {
     return NULL;
   }
-
+  
+  node *t = NULL;
+  
+  /*Si on tombe sur un 0, on a forcément un caractère à lire après*/
+  if (caractere == '0')
+  {
+    t = create_node(fgetc(fptr));    
+  }
+  /*Si on ne tombe pas sur un 0, on est forcément un 1 */
   else
   {
-    t = create_node(nbr);
-    t->left = scan_tree();
-    t->right = scan_tree();
+    t = create_node(' ');
+    t->left = scan_tree(fptr);
+    t->right = scan_tree(fptr);
   }
-
+  
   return t;
-}
-
-/*----------------------------------------------------------------------------*/
-
-int count_nodes(node *t)
-{
-	int count = 0;
-
-	if(t == NULL)
-  {
-		return 0;
-	}
-
-	count++;
-	count += count_nodes(t->left);
-	count += count_nodes(t->right);
-
-	return count;
-}
-
-/*----------------------------------------------------------------------------*/
-
-int count_leaves(node *t)
-{
-	int count = 0;
-
-  if(t == NULL)
-  {
-		return 0;
-	}
-	else if(t->left == NULL && t->right == NULL)
-  {
-		count++;
-	}
-
-	count += count_leaves(t->left);
-	count += count_leaves(t->right);
-
-	return count;
-}
-
-/*----------------------------------------------------------------------------*/
-
-int count_only_children(node *t)
-{
-	int count = 0;
-	if(t == NULL)
-  {
-		return 0;
-	}
-	else if( (t->left != NULL && t->right == NULL) || (t->right != NULL && t->left == NULL) )
-  {
-		count++;
-	}
-
-	count += count_only_children(t->left);
-	count += count_only_children(t->right);
-
-	return count;
-}
-
-/*----------------------------------------------------------------------------*/
-
-int height(node *t)
-{
-	int h1 = 0;
-	int h2 = 0;
-
-	if(t == NULL)
-  {
-		return 0;
-	}
-
-  if(t->left != NULL)
-  {
-    h1++;
-  }
-
-	if(t->right != NULL)
-  {
-		h2++;
-	}
-
-  h1 += height(t->left);
-	h2 += height(t->right);
-
-	if(h1 > h2)
-  {
-		return h1;
-	}
-	else
-  {
-		return h2;
-	}
-
 }
 
 /*----------------------------------------------------------------------------*/

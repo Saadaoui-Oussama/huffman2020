@@ -1,9 +1,12 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef struct _node
 {
-    int data;                /* data stored : an integer    */
+    char data;                /* data stored : an integer    */
     struct _node *left;      /* pointer to the left child   */
     struct _node *right;     /* pointer to the right child  */
 } node;
@@ -11,23 +14,9 @@ typedef struct _node
 /*
  * Allocate memory for a new node.
  */
-node *create_node(int data);
+node *create_node(char data);
 
-void display_prefix(node *t);
-
-void display_infix(node *t);
-
-void display_suffix(node *t);
-
-node *scan_tree(void);
-
-int count_nodes(node *t);
-
-int count_leaves(node *t);
-
-int count_only_children(node *t);
-
-int height(node *t);
+node *scan_tree(FILE *fptr);
 
 void free_tree(node *t);
 

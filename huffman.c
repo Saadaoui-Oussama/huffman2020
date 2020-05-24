@@ -14,14 +14,20 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    FILE *file = fopen(argv[1], "r");
-    if (file == NULL) 
+    FILE *fptr = fopen(argv[1], "r");
+
+    if ( fptr == NULL )
     {
-        printf("Fichier %s introuvable\n", argv[1]);
-        return -1;
+        fprintf(stderr,"File openning failed");
+        exit(EXIT_FAILURE);
     }
+     
+    write_tree( scan_tree(fptr) );
+
+
     
-    
+        
+    fclose(fptr);
 
     return 0;
 }
