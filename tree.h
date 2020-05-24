@@ -20,6 +20,8 @@ node *scan_tree(FILE *fptr);
 
 void fill_code_tab(node *t, char* str, char** code_table);
 
+void encodage(FILE *entree, FILE* sortie, char** code_table);
+
 void free_tree(node *t);
 
 

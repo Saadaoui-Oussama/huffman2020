@@ -22,8 +22,6 @@ node *scan_tree(FILE *fptr)
 {
   char caractere = fgetc(fptr);
 
-  printf("%c ",caractere);
-
   if (caractere == EOF)
   {
     return NULL;
@@ -60,6 +58,7 @@ void fill_code_tab(node *t, char* str, char** code_table) {
     strcpy(gauche, str);
     strcat(gauche, "0"); /* Si on va a gauche dans l'arbre, on met un 0 sur le chemin */
     fill_code_tab(t->left, gauche, code_table);
+    free(gauche);
   }
   
   if (t->right != NULL) {
@@ -67,8 +66,24 @@ void fill_code_tab(node *t, char* str, char** code_table) {
     strcpy(droite, str);
     strcat(droite, "1"); /* Si on va a droite, c'est un 1 */
     fill_code_tab(t->right, droite, code_table);
+    free(droite);
   }
   
+}
+
+/*----------------------------------------------------------------------------*/
+void encodage(FILE *entree, FILE* sortie, char** code_table) {
+  /*
+  int i = 0;
+  while (fgetc(entree) != EOF)
+    i++;
+  */
+  char c;
+  while ((c = fgetc(entree)) != EOF)
+  {
+    fputs(code_table[(unsigned char) c], sortie);
+    fputs(" ", sortie);
+  }
 }
 
 /*----------------------------------------------------------------------------*/

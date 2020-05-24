@@ -21,22 +21,44 @@ int main(int argc, char **argv)
     }
 
     node *t = scan_tree(fptr);
+    write_tree(t);
+
+    /* ---------------------------------- */
    
-    char **code_table = (char **)malloc(256*sizeof(char*)); 
+    char *code_table[256]; 
     char* test = ""; /* On stockera les chemins dans cette chaine */
 
     fill_code_tab(t, test, code_table);
-    printf("BABORD ET TRIBORD\n");
 
-    char str[] = "abracadabra"; /* On peut utiliser n'importe tel mot tant qu'il est composé uniquement de lettres dans l'arbre */
+    /*
+    char str[] = "abracadabra";
     int i, len = strlen(str);
     for (i = 0; i < len; i++) {
     	printf("%s ", code_table[(unsigned char)str[i]]);
     }
     printf("\n");
+    */
 
-    write_tree(t);
-        
+    /* ---------------------------------- */
+
+    FILE *entree = fopen(argv[2], "r");
+    if ( entree == NULL )
+    {
+        fprintf(stderr,"Erreur d'ouverture du fichier: %s introuvable\n", argv[2]);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *sortie = fopen("kurohige.txt", "w"); /* nom de fichier changeable */
+    if ( sortie == NULL )
+    {
+    	fprintf(stderr,"Erreur de création du fichier d'encodage");
+        exit(EXIT_FAILURE);
+    }
+
+    encodage(entree, sortie, code_table);
+
+    fclose(sortie);
+    fclose(entree);
     fclose(fptr);
 
     return 0;
