@@ -13,6 +13,7 @@ node *create_node(char data)
   n->data = data;
   n->left = NULL;
   n->right = NULL;
+  n->priority = 0;
   return n;
 }
 
@@ -46,45 +47,130 @@ node *scan_tree(FILE *fptr)
 }
 
 /*----------------------------------------------------------------------------*/
-void fill_code_tab(node *t, char* str, char** code_table) {
 
-  if (t->left == NULL && t->right == NULL) { /* On est sur la feuille */
-    code_table[(unsigned char)t->data] = (char *)malloc((strlen(str)+1)*sizeof(char)); /* On alloue de la place pour stocker la chaine */
+char **create_code_tab(int length)
+{
+  char **code_tab = malloc(length*sizeof(char*));
+  int i;
+  for (i = 0; i < length; i++) {
+    code_tab[i] = (char*) malloc(length*sizeof(char));
+  }
+
+  return code_tab;
+}
+
+/*----------------------------------------------------------------------------*/
+void fill_code_tab(node *t, char* str, int str_pos, char** code_table) 
+{
+  if (t->left == NULL && t->right == NULL)  /* On est sur la feuille */
+  {
     strcpy(code_table[(unsigned char)t->data], str);
   }
 
-  if (t->left != NULL) {
-    char *gauche = (char *)malloc((strlen(str)+1)*sizeof(char));
-    strcpy(gauche, str);
-    strcat(gauche, "0"); /* Si on va a gauche dans l'arbre, on met un 0 sur le chemin */
-    fill_code_tab(t->left, gauche, code_table);
-    free(gauche);
+  if (t->left != NULL) 
+  {
+    str[str_pos] = '0';
+    str[str_pos+1] = '\0';
+    fill_code_tab(t->left, str, str_pos+1, code_table);
   }
   
-  if (t->right != NULL) {
-    char *droite = (char *)malloc((strlen(str)+1)*sizeof(char));
-    strcpy(droite, str);
-    strcat(droite, "1"); /* Si on va a droite, c'est un 1 */
-    fill_code_tab(t->right, droite, code_table);
-    free(droite);
+  if (t->right != NULL) 
+  {
+    str[str_pos] = '1';
+    str[str_pos+1] = '\0';
+    fill_code_tab(t->right, str, str_pos+1, code_table);
   }
   
 }
 
 /*----------------------------------------------------------------------------*/
-void encodage(FILE *entree, FILE* sortie, char** code_table) {
-  /*
+
+void encodage(FILE *entree, FILE* sortie, char** code_table) 
+{
+  /*Remet le curseur de lecture à l'état 0 pour relire le fichier (on s'assure que l'on va bien lire le début du fichier)*/
+  rewind(entree);
+
   int i = 0;
+
+  /*Compte le nombre de caractere*/
   while (fgetc(entree) != EOF)
+  {
     i++;
-  */
+  }
+
+  /*Création d'un tableau de 100 caractere, pour stocker la conversion : (int) nombre -> (char*) nombre */
+  char str[100];
+  sprintf(str, "%d", i);
+  
+  /*Insere le nombre de caractere*/
+  fputs(str, sortie);
+  fputs("\n", sortie);
+  
+  /*Remet le curseur de lecture à l'état 0 pour relire le fichier*/
+  rewind(entree);
+
+  /*Lis chaque caractere puis place son code ASCII dans code_table qui renvoie la valeur binaire contenu à cette position*/
   char c;
   while ((c = fgetc(entree)) != EOF)
   {
     fputs(code_table[(unsigned char) c], sortie);
     fputs(" ", sortie);
   }
+
 }
+
+/*----------------------------------------------------------------------------*/
+
+
+void occurences(FILE *entree, int tab_occurences[], int length)
+{
+  /*Remet le curseur de lecture à l'état 0 pour relire le fichier (on s'assure que l'on va bien lire le début du fichier)*/
+  rewind(entree);
+
+  char caractere;
+
+  while (caractere != EOF)
+  {
+    caractere = fgetc(entree);
+    tab_occurences[ (unsigned char) caractere ]++;  
+
+  }
+
+  /*Remet le curseur de lecture à l'état 0 pour relire le fichier (si on le réeutilise)*/
+  rewind(entree);
+
+  /*Permet de vérifier le nombre d'occurences*/
+  /*
+  int i = 0;
+  for (i = 0; i < length-1; i++)
+  {
+    if(tab_occurences[i] != 0)
+    {
+      printf("occurences | %c : %d\n",(char) i,tab_occurences[ i ]);  
+      caractere = fgetc(entree);
+    }
+  }
+  */
+
+}
+
+/*----------------------------------------------------------------------------*/
+
+FILE* open_file(char *path, char* mode)
+{
+  FILE *f = fopen(path, mode);
+
+    if ( f == NULL )
+    {
+        fprintf(stderr,"Erreur d'ouverture du fichier: %s introuvable\n", path);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\nVous avez ouvert %s en mode %s\n",path,mode);
+
+    return f;
+}
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -99,3 +185,17 @@ void free_tree(node *t)
   free_tree(t->right);
 	free(t);
 }
+
+/*----------------------------------------------------------------------------*/
+
+void free_code_table(char** code_table, int length)
+{
+  int i;
+  for(i = 0; i < length; i++)  /* taille code_table */
+  {
+    free(code_table[i]);
+  }
+
+  free(code_table);
+}
+

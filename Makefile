@@ -1,8 +1,8 @@
 CC=gcc
 CFLAGS=-Wall -ansi
 LDFLAGS=
-DEPS=visualtree.h tree.h
-OBJ=visualtree.o tree.o
+DEPS=visualtree.h tree.h prioqueue.h
+OBJ=visualtree.o tree.o prioqueue.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -12,4 +12,4 @@ huffman: huffman.o $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) huffman huffman.o current-tree.dot current-tree.pdf
+	rm -f $(OBJ) huffman huffman.o prioqueue.o current-tree.dot current-tree.pdf fichier_de_sortie.txt
