@@ -12,4 +12,4 @@ huffman: huffman.o $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) huffman huffman.o prioqueue.o current-tree.dot current-tree.pdf fichier_de_sortie.txt
+	rm -f $(OBJ) huffman huffman.o prioqueue.o current-tree.dot current-tree.pdf encodage.txt

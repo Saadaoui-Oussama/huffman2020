@@ -6,10 +6,10 @@
 
 typedef struct _node
 {
-    char data;                /* data stored : an integer    */
+    char data;               /* data stored : a letter      */
     struct _node *left;      /* pointer to the left child   */
     struct _node *right;     /* pointer to the right child  */
-    int priority; /* priority in the prioqueue  */
+    int priority;            /* priority in the prioqueue   */
 } node;
 
 /*
@@ -28,6 +28,10 @@ void encodage(FILE *entree, FILE* sortie, char** code_table);
 FILE* open_file(char *path, char* mode);
 
 void occurences(FILE *entree, int tab_occurences[], int length);
+
+node *huffman(int tab_occurences[], int length);
+
+void write_huffman(node *t, FILE *sortie);
 
 void free_tree(node *t);
 

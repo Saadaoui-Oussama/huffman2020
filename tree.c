@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include "prioqueue.h"
 
 /*----------------------------------------------------------------------------*/
 
@@ -129,9 +130,8 @@ void occurences(FILE *entree, int tab_occurences[], int length)
 
   char caractere;
 
-  while (caractere != EOF)
+  while ((caractere = fgetc(entree)) != EOF)
   {
-    caractere = fgetc(entree);
     tab_occurences[ (unsigned char) caractere ]++;  
 
   }
@@ -156,6 +156,61 @@ void occurences(FILE *entree, int tab_occurences[], int length)
 
 /*----------------------------------------------------------------------------*/
 
+node *huffman(int tab_occurences[], int length) {
+  prioqueue *pq = create_pq();
+
+  int i = 0;
+  node *t = NULL;
+
+  for (i = 0; i < length-1; i++)
+  {            
+      if (tab_occurences[i] > 0)
+      {
+          t = create_node( (char) i );
+          t->priority = tab_occurences[i];
+
+           insert_pq(pq, t);
+      }
+  }
+  
+  node *t2 = NULL;
+  node *t3 = NULL;
+
+  while( size_pq(pq) >= 2 )
+  {
+      t2 = remove_min_pq(pq);
+      t3 = remove_min_pq(pq);
+
+      t = create_node( tab_occurences[ (unsigned char) t2->data] + tab_occurences[ (unsigned char) t3->data] );
+      t->left = t3;
+      t->right = t2;
+
+      insert_pq(pq, t);
+  }
+
+  t = remove_min_pq(pq);
+  free_pq(pq);
+  return t;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void write_huffman(node *t, FILE *sortie){
+  if (t != NULL) {
+    if (t->left != NULL){
+      fputs("1", sortie);
+      write_huffman(t->left, sortie);
+      write_huffman(t->right, sortie);
+    }
+    else {
+      fputs("0", sortie);
+      fputc(t->data, sortie);
+    }
+  }
+}
+
+/*----------------------------------------------------------------------------*/
+
 FILE* open_file(char *path, char* mode)
 {
   FILE *f = fopen(path, mode);
@@ -166,7 +221,7 @@ FILE* open_file(char *path, char* mode)
         exit(EXIT_FAILURE);
     }
 
-    printf("\nVous avez ouvert %s en mode %s\n",path,mode);
+    printf("Vous avez ouvert %s en mode %s\n",path,mode);
 
     return f;
 }
