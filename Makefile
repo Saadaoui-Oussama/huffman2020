@@ -9,7 +9,8 @@ OBJ=visualtree.o tree.o prioqueue.o
 
 huffman: huffman.o $(OBJ)
 	gcc -o $@ $^ $(LDFLAGS)
+	rm -f encodage.txt decodage.txt
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) huffman huffman.o prioqueue.o current-tree.dot current-tree.pdf encodage.txt decodage.txt
+	rm -f $(OBJ) huffman huffman.o current-tree.dot current-tree.pdf encodage.txt decodage.txt
