@@ -37,6 +37,10 @@ void free_tree(node *t);
 
 void free_code_table(char** code_table, int length);
 
+node *scan_tree_decod(FILE *fptr);
 
+char get_translation(node *t, FILE* f);
+
+void decodage(node *t, FILE* entree, FILE* sortie, int wordlength);
 
 #endif /* TREE_H */

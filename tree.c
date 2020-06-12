@@ -139,19 +139,6 @@ void occurences(FILE *entree, int tab_occurences[], int length)
   /*Remet le curseur de lecture à l'état 0 pour relire le fichier (si on le réeutilise)*/
   rewind(entree);
 
-  /*Permet de vérifier le nombre d'occurences*/
-  /*
-  int i = 0;
-  for (i = 0; i < length-1; i++)
-  {
-    if(tab_occurences[i] != 0)
-    {
-      printf("occurences | %c : %d\n",(char) i,tab_occurences[ i ]);  
-      caractere = fgetc(entree);
-    }
-  }
-  */
-
 }
 
 /*----------------------------------------------------------------------------*/
@@ -224,6 +211,62 @@ FILE* open_file(char *path, char* mode)
     printf("Vous avez ouvert %s en mode %s\n",path,mode);
 
     return f;
+}
+
+/*----------------------------------------------------------------------------*/
+
+node *scan_tree_decod(FILE *fptr)
+{
+  char caractere = fgetc(fptr);
+
+  if (caractere == '\n')
+  {
+    return NULL;
+  }
+  
+  node *t = NULL;
+  
+  /*Si on tombe sur un 0, on a forcément un caractère à lire après*/
+  if (caractere == '0')
+  {
+    t = create_node(fgetc(fptr));    
+  }
+  /*Si on ne tombe pas sur un 0, on est forcément un 1 */
+  else
+  {
+    t = create_node(' ');
+    t->left = scan_tree_decod(fptr);
+    t->right = scan_tree_decod(fptr);
+  }
+  
+  return t;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char get_translation(node *t, FILE* f) 
+{
+  char c = fgetc(f);
+  if (c == EOF || c == ' ')
+    return t->data;
+
+  else if (c == '0')
+    return get_translation(t->left, f);
+
+  /*else if (c == '1')*/
+  return get_translation(t->right, f);
+
+  
+}
+
+/*----------------------------------------------------------------------------*/
+
+void decodage(node *t, FILE* entree, FILE* sortie, int wordlength) 
+{
+  int i;
+  for (i = 0; i < wordlength; i++) {
+    fputc(get_translation(t, entree), sortie);
+  }
 }
 
 
